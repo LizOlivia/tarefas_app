@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TarefasPage extends StatefulWidget {
   const TarefasPage({super.key});
@@ -8,6 +9,9 @@ class TarefasPage extends StatefulWidget {
 }
 
 class _TarefasPageState extends State<TarefasPage> {
+  late SharedPreferences prefs;
+  
+  
   List<String> tarefas = [" Pagar contas", "Comprar roupas"];
   String novaTarefa = "";
 
@@ -16,6 +20,8 @@ class _TarefasPageState extends State<TarefasPage> {
       setState(() {
         tarefas.add(novaTarefa);
       });
+      prefs.setStringList("tarefas", tarefas);
+      
     }
   }
 
@@ -23,9 +29,25 @@ class _TarefasPageState extends State<TarefasPage> {
     
     setState(() {
     tarefas.remove(tarefa);  
-    });
+        });
+        prefs.setStringList("tarefas", tarefas);
 
   }
+
+  @override
+  void initState() {    
+    super.initState();
+    carregarTarefas();  
+  }
+Future<void> carregarTarefas () async {
+prefs = await SharedPreferences.getInstance();
+setState(() {
+tarefas = prefs.getStringList("tarefas")??[];  
+});
+
+
+
+}
 
   @override
   Widget build(BuildContext context) {
